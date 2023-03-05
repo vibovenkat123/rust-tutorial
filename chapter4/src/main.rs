@@ -5,8 +5,7 @@ fn main() {
        println!("{}", s);
     }
     // s is not valid anymore
-    // the String type
-    // can be mutable
+    // the String type can be mutable
     let mut s = String::from("s");
     s.push_str(" is mutable");
     println!("{}", s);
