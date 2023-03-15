@@ -4,7 +4,7 @@ use rand::Rng;
 fn main() {
     let lower_range = 100;
     let higher_range = 300;
-    println!("You have been randomly selected to win the lottery!");
+    println!("You have been randomly selected to win the lottery!!");
     println!("All you have to do is guess the number between {lower_range} and {higher_range}");
     let lotto_number = rand::thread_rng().gen_range(100..=300);
     let amount = 1_000_000_000;
