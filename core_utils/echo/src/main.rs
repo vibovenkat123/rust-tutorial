@@ -10,9 +10,3 @@ fn main() {
         }
     }
 }
-fn formatted(msg: Option<&str>) -> String {
-    match msg {
-        Some(n) => format!("{n}"),
-        None => format!(""),
-    }
-}
