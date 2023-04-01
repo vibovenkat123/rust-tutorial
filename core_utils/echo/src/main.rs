@@ -5,7 +5,7 @@ fn main() {
         1 => {
             println!("")
         }
-        2  => {
+        2 => {
             println!("{}", args[1])
         }
         3 => {
@@ -13,8 +13,7 @@ fn main() {
                 print!("{}", args[2]);
             } else if args[2] == "-n" {
                 print!("{}", args[1]);
-            }
-            else {
+            } else {
                 println!("Too much arguments");
             }
         }

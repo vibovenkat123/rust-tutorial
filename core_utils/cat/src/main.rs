@@ -1,4 +1,4 @@
-use std::{fs, env, process::exit, io, io::Write};
+use std::{env, fs, io, io::Write, process::exit};
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {

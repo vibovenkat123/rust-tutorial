@@ -1,6 +1,6 @@
-use std::io;
-use std::cmp::Ordering;
 use rand::Rng;
+use std::cmp::Ordering;
+use std::io;
 fn main() {
     let lower_range = 100;
     let higher_range = 300;
@@ -16,16 +16,16 @@ fn main() {
             .expect("Failed to read your guess");
         let guess: u32 = match guess.trim().parse() {
             Ok(num) => num,
-            Err(_) => continue
+            Err(_) => continue,
         };
         println!("You guessed {guess}");
         match guess.cmp(&lotto_number) {
             Ordering::Less => println!("The number you entered was low, enter something higher"),
-            Ordering::Equal => { 
+            Ordering::Equal => {
                 println!("Congratulations, you won ${amount} USD");
                 break;
-            },
-            Ordering::Greater => println!("The number you entered was high, enter something lower")
+            }
+            Ordering::Greater => println!("The number you entered was high, enter something lower"),
         }
     }
 }
