@@ -1,4 +1,6 @@
-use std::{cmp::Ordering, env, fs, process::exit, path::Path};
+use std::{cmp::Ordering, env, fs, path::Path, process::exit};
+
+
 fn copy_dir(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
     let _ = fs::create_dir_all(&dst);
     let read_dir = fs::read_dir(&src).unwrap();
@@ -16,39 +18,61 @@ fn copy_dir(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()>
 }
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let (src, dest): (String, String) = match args.len().cmp(&3) {
+    let (is_dir, src, dest): (bool, String, String) = match args.len().cmp(&3) {
         Ordering::Less => {
             println!("Not enough arguments");
             exit(1);
         }
         Ordering::Greater => {
-            println!("Too much arguments");
-            exit(1);
+            if (&args[1] == "-R" || &args[1] == "-r") && args.len() == 4 {
+                let src_arg = &args[2];
+                let dest_arg = &args[3];
+                (true, src_arg.to_string(), dest_arg.to_string())
+            } else {
+                println!("Too much arguments");
+                exit(1);
+            }
         }
         Ordering::Equal => {
-            let arg1 = &args[1];
-            let arg2 = &args[2];
-            (arg1.to_string(), arg2.to_string())
+            let src_arg = &args[1];
+            let dest_arg = &args[2];
+            (false, src_arg.to_string(), dest_arg.to_string())
         }
     };
-    let copy_result = fs::copy(&src, &dest);
-    let _ = match copy_result {
-        Ok(val) => val,
-        Err(_) => match fs::read_dir(&src) {
+    if is_dir {
+        let _ = match fs::read_dir(&src) {
             Ok(_) => {
-                let res = copy_dir(src, dest);
-                let _ = match res {
+                let _ = match copy_dir(&src, &dest) {
                     Ok(val) => val,
                     Err(err) => {
                         panic!("{}", err);
                     }
                 };
-                exit(0);
             }
             Err(_) => {
-                println!("File doesn't exist");
-                exit(1);
+                println!("{}: directory not found", src);
             }
-        },
-    };
+        };
+    } else {
+        let copy_result = fs::copy(&src, &dest);
+        let _ = match copy_result {
+            Ok(val) => val,
+            Err(err) => {
+                let errcode = err.raw_os_error();
+                let code: i32 = match errcode {
+                    None => panic!("{}", err),
+                    Some(code) => code,
+                };
+                if code == 21 {
+                    let src_name = Path::new(&src).file_name().unwrap().to_str().unwrap();
+                    match fs::copy(&src, format!("{}/{}", &dest, &src_name)) {
+                        Ok(val) => val,
+                        Err(e) => panic!("{}", e),
+                    }
+                } else {
+                    panic!("{}", err);
+                }
+            }
+        };
+    }
 }
